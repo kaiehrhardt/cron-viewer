@@ -2,7 +2,7 @@ name: Build and push cron-viewer image
 
 on:
   push:
-    branches: master
+    branches: main
   schedule:
     - cron: '0 0 * * *'
 
