@@ -9,4 +9,5 @@ RUN apk add --no-cache tzdata && \
     cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
     echo "Europe/Berlin" > /etc/timezone
 COPY --from=build /go/bin/cron-viewer /usr/local/bin/
-ENTRYPOINT ["cron-viewer"]
+COPY --from=build /go/src/app/config.yml /etc/cron-viewer/config.yml
+ENTRYPOINT ["cron-viewer", "-config", "/etc/cron-viewer/config.yml"]

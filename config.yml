@@ -1,0 +1,7 @@
+endpoints:
+  - "http://api.iobroker.homelab.local/toggle/hmip.0.devices.3014F711A00001DD8993E517.channels.1.on"
+cronjobs:
+  - "0 4 * * *"
+  - "0 6 * * *"
+  - "0 9 * * *"
+  - "0 22 * * *"
