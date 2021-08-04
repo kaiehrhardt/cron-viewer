@@ -1,4 +1,4 @@
-name: Build and push cron-viewer image
+name: Build and push cron-viewer container image
 
 on:
   push:

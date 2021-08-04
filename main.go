@@ -79,7 +79,10 @@ func (cfg *Config) Toggle() {
 func (cfg *Config) Run() {
 	c := cron.New()
 	for _, job := range cfg.Cronjobs {
-		c.AddFunc(job, cfg.Toggle)
+		_, err := c.AddFunc(job, cfg.Toggle)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	c.Start()
 
