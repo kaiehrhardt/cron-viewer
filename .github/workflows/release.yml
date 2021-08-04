@@ -8,11 +8,11 @@ jobs:
     name: release
     runs-on: ubuntu-latest
     steps:
-      - name: rheckout
+      - name: checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Setup Node.js
+      - name: setup Node.js
         uses: actions/setup-node@v1
         with:
           node-version: 12
