@@ -1,4 +1,4 @@
-name: Build and push cron-viewer container image
+name: container-build
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  main:
+  build:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
