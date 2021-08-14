@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"text/template"
 
 	"github.com/robfig/cron/v3"
 	"gopkg.in/yaml.v2"
@@ -117,12 +118,7 @@ func (r *Runner) Switch() {
 
 func (r *Runner) stateHandler(cfg *Config, c *cron.Cron) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != "/changeState" {
-			http.Error(w, "404 not found.", http.StatusNotFound)
-			return
-		}
-
-		if req.Method != "GET" {
+		if req.Method != "POST" {
 			http.Error(w, "Method is not supported.", http.StatusNotFound)
 			return
 		}
@@ -156,6 +152,16 @@ func main() {
 	log.Printf("Initial Prepair - Runner State Active: %+v", r.Active)
 
 	c := cfg.Start()
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			t, _ := template.ParseFiles("/www/index.html")
+			err = t.Execute(w, nil)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	})
 
 	http.HandleFunc("/changeState", r.stateHandler(cfg, c))
 
