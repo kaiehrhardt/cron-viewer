@@ -1,0 +1,12 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<h1>Enable / Disable Cron Viewer!</h1>
+<button id="toggle" onclick="toggle()">Disable Cron Viewer</button>
+<script>
+    function toggle() {
+        $.ajax({
+            url: "/changeState",
+            type: "POST"
+        });
+        $("#toggle").text((i, t) => t == 'Disable Cron Viewer' ? 'Enable Cron Viewer' : 'Disable Cron Viewer');
+    }
+</script>
