@@ -1,5 +1,4 @@
 endpoints:
   - "http://api.iobroker.homelab.local/toggle/0_userdata.0.test"
 cronjobs:
-  - "@every 30s"
-  - "@every 5s"
+  - "@every 2s"
