@@ -17,15 +17,17 @@ func ValidateConfigPath(path string) error {
 	return nil
 }
 
-func ParseFlags() (string, error) {
+func ParseFlags() (string, bool, error) {
 	var configPath string
-
 	flag.StringVar(&configPath, "config", "./config.yml", "path to config file")
+
+	backend := flag.Bool("backend", false, "run in backend mode")
+
 	flag.Parse()
 
 	if err := ValidateConfigPath(configPath); err != nil {
-		return "", err
+		return "", *backend, err
 	}
 
-	return configPath, nil
+	return configPath, *backend, nil
 }

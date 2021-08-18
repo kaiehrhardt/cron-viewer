@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	cfgPath, err := ParseFlags()
+	cfgPath, backend, err := ParseFlags()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,15 +25,17 @@ func main() {
 
 	c := cfg.Start()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			t, _ := template.ParseFiles("/www/index.html")
-			err = t.Execute(w, nil)
-			if err != nil {
-				log.Fatal(err)
+	if !backend {
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == "GET" {
+				t, _ := template.ParseFiles("/www/index.html")
+				err = t.Execute(w, nil)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
-		}
-	})
+		})
+	}
 
 	http.HandleFunc("/changeState", r.stateHandler(cfg, c))
 
