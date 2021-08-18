@@ -37,7 +37,7 @@ func main() {
 		})
 	}
 
-	http.HandleFunc("/changeState", r.stateHandler(cfg, c))
+	http.HandleFunc("/state", r.stateHandler(cfg, c))
 
 	log.Println("Starting server at port 8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
