@@ -35,7 +35,10 @@ func (r *Runner) stateHandler(cfg *Config, c *cron.Cron) http.HandlerFunc {
 		}
 
 		if req.Method == "GET" {
-			io.WriteString(w, strconv.FormatBool(r.Active))
+			_, err := io.WriteString(w, strconv.FormatBool(r.Active))
+			if err != nil {
+				log.Fatal(err)
+			}
 		} else if req.Method == "POST" {
 			r.Switch()
 			log.Printf("New Runner State - Active: %+v", r.Active)
