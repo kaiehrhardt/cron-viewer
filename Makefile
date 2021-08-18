@@ -8,4 +8,4 @@ run:
 	@docker run -it --rm -p 8080:8080 $(IMAGE_NAME):$(IMAGE_TAG)
 
 run-test-config: docker-build
-	@docker run -it --rm -p 8080:8080 -v $(shell pwd)/config-test.yml:/etc/cron-viewer/config.yml $(IMAGE_NAME):$(IMAGE_TAG)
+	@docker run -it --rm -p 8080:8080 -v $(shell pwd)/config/config-test.yml:/etc/cron-viewer/config.yml $(IMAGE_NAME):$(IMAGE_TAG)
