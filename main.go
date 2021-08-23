@@ -23,7 +23,7 @@ func main() {
 	r := NewRunner()
 	log.Printf("Initial Prepair - Runner State Active: %+v", r.Active)
 
-	c := cfg.Start()
+	c := cfg.StartCron()
 
 	if !backend {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
