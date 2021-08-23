@@ -10,13 +10,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Config struct {
+type Config []struct {
 	Endpoints []string `yaml:"endpoints"`
 	Cronjobs  []string `yaml:"cronjobs"`
 }
 
-func NewConfig(configPath string) (*Config, error) {
-	config := &Config{}
+func NewConfig(configPath string) (Config, error) {
+	config := Config{}
 
 	file, err := os.Open(configPath)
 	if err != nil {
@@ -32,30 +32,34 @@ func NewConfig(configPath string) (*Config, error) {
 	return config, nil
 }
 
-func (cfg *Config) Toggle() {
-	for _, endpoint := range cfg.Endpoints {
-		resp, err := http.Get(endpoint)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer resp.Body.Close()
+func (cfg Config) CallEndpoints() {
+	for _, entry := range cfg {
+		for _, endpoint := range entry.Endpoints {
+			resp, err := http.Get(endpoint)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		bodyString := string(body)
-		log.Println(bodyString)
+			bodyString := string(body)
+			log.Println(bodyString)
+		}
 	}
 }
 
-func (cfg *Config) Start() (c *cron.Cron) {
+func (cfg Config) StartCron() (c *cron.Cron) {
 	c = cron.New()
-	for _, job := range cfg.Cronjobs {
-		_, err := c.AddFunc(job, cfg.Toggle)
-		if err != nil {
-			log.Fatal(err)
+	for _, entry := range cfg {
+		for _, job := range entry.Cronjobs {
+			_, err := c.AddFunc(job, cfg.CallEndpoints)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 	c.Start()
@@ -65,7 +69,7 @@ func (cfg *Config) Start() (c *cron.Cron) {
 	return c
 }
 
-func (cfg *Config) Stop(c *cron.Cron) {
+func (cfg Config) StopCron(c *cron.Cron) {
 	if len(c.Entries()) >= 1 {
 		c.Stop()
 	}
