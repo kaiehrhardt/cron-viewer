@@ -27,7 +27,7 @@ func (r *Runner) Switch() {
 	}
 }
 
-func (r *Runner) stateHandler(cfg Config, c *cron.Cron) http.HandlerFunc {
+func (r *Runner) stateHandler(cfg Config, cs []*cron.Cron) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		if req.Method != "POST" && req.Method != "GET" {
 			http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -43,10 +43,14 @@ func (r *Runner) stateHandler(cfg Config, c *cron.Cron) http.HandlerFunc {
 			r.Switch()
 			log.Printf("New Runner State - Active: %+v", r.Active)
 
-			if c != nil && r.Active {
-				c = cfg.StartCron()
+			if len(cs) >= 0 && r.Active {
+				for i, _ := range cs {
+					cfg.StartCron(i)
+				}
 			} else if !r.Active {
-				cfg.StopCron(c)
+				for _, c := range cs {
+					cfg.StopCron(c)
+				}
 			}
 		}
 	}

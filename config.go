@@ -32,34 +32,30 @@ func NewConfig(configPath string) (Config, error) {
 	return config, nil
 }
 
-func (cfg Config) CallEndpoints() {
-	for _, entry := range cfg {
-		for _, endpoint := range entry.Endpoints {
-			resp, err := http.Get(endpoint)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer resp.Body.Close()
-
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			bodyString := string(body)
-			log.Println(bodyString)
+func (cfg Config) CallEndpoints(i int) {
+	for _, endpoint := range cfg[i].Endpoints {
+		resp, err := http.Get(endpoint)
+		if err != nil {
+			log.Fatal(err)
 		}
+		defer resp.Body.Close()
+
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		bodyString := string(body)
+		log.Println(bodyString)
 	}
 }
 
-func (cfg Config) StartCron() (c *cron.Cron) {
+func (cfg Config) StartCron(i int) (c *cron.Cron) {
 	c = cron.New()
-	for _, entry := range cfg {
-		for _, job := range entry.Cronjobs {
-			_, err := c.AddFunc(job, cfg.CallEndpoints)
-			if err != nil {
-				log.Fatal(err)
-			}
+	for _, job := range cfg[i].Cronjobs {
+		_, err := c.AddFunc(job, func() { cfg.CallEndpoints(i) })
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 	c.Start()

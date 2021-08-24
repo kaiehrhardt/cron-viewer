@@ -1,9 +1,9 @@
 - endpoints:
     - "http://api.iobroker.homelab.local/set/0_userdata.0.test?value=true"
   cronjobs:
-    - "0/10 * * * *"
+    - "@every 1s"
 
 - endpoints:
     - "http://api.iobroker.homelab.local/set/0_userdata.0.test?value=false"
   cronjobs:
-    - "5/10 * * * *"
+    - "@every 10s"

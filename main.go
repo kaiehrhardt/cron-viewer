@@ -4,9 +4,13 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
+
+	var CronSlice []*cron.Cron
 
 	cfgPath, backend, err := ParseFlags()
 	if err != nil {
@@ -23,7 +27,9 @@ func main() {
 	r := NewRunner()
 	log.Printf("Initial Prepair - Runner State Active: %+v", r.Active)
 
-	c := cfg.StartCron()
+	for i, _ := range cfg {
+		CronSlice = append(CronSlice, cfg.StartCron(i))
+	}
 
 	if !backend {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +43,7 @@ func main() {
 		})
 	}
 
-	http.HandleFunc("/state", r.stateHandler(cfg, c))
+	http.HandleFunc("/state", r.stateHandler(cfg, CronSlice))
 
 	log.Println("Starting server at port 8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
