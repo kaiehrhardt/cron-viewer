@@ -1,10 +1,9 @@
 package main
 
 import (
-	"io"
+	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/robfig/cron/v3"
 )
@@ -32,19 +31,16 @@ func (r *Runner) stateHandler(cfg *Config, c *cron.Cron) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		w.Header().Set("Content-Type", "application/json")
 
 		if req.Method != "POST" && req.Method != "GET" && req.Method != "OPTIONS" {
 			http.Error(w, "Method is not supported.", http.StatusNotFound)
 			return
 		}
 
-		if req.Method == "GET" {
-			_, err := io.WriteString(w, strconv.FormatBool(r.Active))
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else if req.Method == "POST" {
+		if req.Method == "POST" {
 			r.Switch()
+
 			log.Printf("New Runner State - Active: %+v", r.Active)
 
 			if c != nil && r.Active {
@@ -52,6 +48,14 @@ func (r *Runner) stateHandler(cfg *Config, c *cron.Cron) http.HandlerFunc {
 			} else if !r.Active {
 				cfg.Stop(c)
 			}
+		}
+
+		w.WriteHeader(http.StatusOK)
+		data := fmt.Sprintf("{\"Active\":%t}\n", r.Active)
+		response := []byte(data)
+		_, err := w.Write(response)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 }

@@ -7,7 +7,7 @@
             url: "/state",
             type: "GET",
             success: function(result){
-                if (result === "true") {
+                if (result.Active === true) {
                     $("#toggle").text("Disable Cron Viewer")
                 } else {
                     $("#toggle").text("Enable Cron Viewer")
