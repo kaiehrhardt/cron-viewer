@@ -4,7 +4,7 @@ IMAGE_TAG?=latest
 docker-build:
 	@docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
 
-run:
+run: docker-build
 	@docker run -it --rm -p 8080:8080 $(IMAGE_NAME):$(IMAGE_TAG)
 
 run-test-config: docker-build

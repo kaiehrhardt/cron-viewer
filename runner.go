@@ -29,7 +29,11 @@ func (r *Runner) Switch() {
 
 func (r *Runner) stateHandler(cfg *Config, c *cron.Cron) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		if req.Method != "POST" && req.Method != "GET" {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+		if req.Method != "POST" && req.Method != "GET" && req.Method != "OPTIONS" {
 			http.Error(w, "Method is not supported.", http.StatusNotFound)
 			return
 		}
