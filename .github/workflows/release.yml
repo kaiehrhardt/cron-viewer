@@ -5,20 +5,12 @@ on:
       - main
 jobs:
   release:
-    name: release
     runs-on: ubuntu-latest
+    container: smartive/semantic-release-image:latest
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: install semantic-release
-        run: npm install semantic-release
-      - name: release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+      - name: install semantic-release/github
+        run: npm install semantic-release @semantic-release/github
+      - name: semantic-release
+        run: semantic-release
