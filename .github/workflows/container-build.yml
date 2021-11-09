@@ -7,32 +7,14 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  build:
-    name: Push Docker image to Docker Hub
+  container-build:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      -
-        name: Login to DockerHub
-        uses: docker/login-action@v1 
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Checkout
+      - name: checkout
         uses: actions/checkout@v2
-      -
-        name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
+      - name: container-build
+        uses: kaiehrhardt/full-build-push-action@main
         with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cron-viewer:latest
+          token: "${{ secrets.GITHUB_TOKEN }}"
